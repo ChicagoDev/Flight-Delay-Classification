@@ -24,9 +24,9 @@ class Ohare(object):
 	           'NE': ['JFK', 'EWR']
 	           }
 	
-	def __init__(self):
+	def __init__(self, monthly_tffx_csv='../data/ohare/01_2018_ORD_AIR_TFFX.csv'):
 		
-		self.ord_flights = pd.read_csv('../data/ohare/01_2018_ORD_AIR_TFFX.csv', low_memory=False)
+		self.ord_flights = pd.read_csv(monthly_tffx_csv, low_memory=False)
 		
 		# Split the data between inbound and outbound flights
 		mask_from_ord = self.ord_flights.Origin == 'ORD'

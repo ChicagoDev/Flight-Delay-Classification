@@ -1,3 +1,28 @@
+import pandas as pd
+import copy
+import seaborn as sns
+
+class Hanger(object):
+	
+	@staticmethod
+	def monthly_delay_report(ports_outbound_flights):
+		"""For a given airport's monthly records, return its categorical delay statistics"""
+		
+		only_with_delay_record = ports_outbound_flights.dropna(
+			subset=['CarrierDelay', 'WeatherDelay', 'NASDelay', 'SecurityDelay', 'LateAircraftDelay'])
+		
+		delays = pd.DataFrame(only_with_delay_record.loc[:, 'CarrierDelay':'LateAircraftDelay'].mean())
+		delays = delays.reset_index()
+		delays = delays.rename(columns={0: 'Time', 'index': 'Reason'})
+		
+		return copy.deepcopy(delays)
+	
+	@staticmethod
+	def chart_monthly_delay_report(ports_outbound_flights):
+		
+		delays = Hanger.monthly_delay_report(ports_outbound_flights)
+		sns.barplot(x=delays['Reason'], y=delays['Time'])
+
 """
 
 HANGER is a metaphorical construct. The place there airport objects are subclassed as
