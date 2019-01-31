@@ -1,0 +1,4 @@
+.idea
+__pycache__
+data/ohare/01_2018_ORD_AIR_TFFX.csv
+data/zips
