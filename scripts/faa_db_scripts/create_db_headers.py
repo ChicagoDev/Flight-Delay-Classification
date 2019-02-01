@@ -19,7 +19,7 @@ faa = Ohare.Ohare()
 schema = faa.ord_flights.head(1)
 
 username = 'bjg' # or 'ubuntu'
-database_name = 'all_flights'
+database_name = 'ORD_IB_OB'
 
 params = { 'host': 'localhost',
            'port': 5432
