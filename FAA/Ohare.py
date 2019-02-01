@@ -7,15 +7,7 @@ from collections import defaultdict
 
 class Ohare(object):
 	"""
-	faa = OrdUtils()
-
-	faa.get_ob_delays()
-
-	faa.get_ib_delays()
-
-	faa.get_baselines()
-
-	faa.get_mini_ob_flights()
+		ord_flights = all flights imported from csv.
 	"""
 	
 	regions = {'SE': ['ATL', 'DFW'],

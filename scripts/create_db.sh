@@ -9,11 +9,13 @@
 # $3 Table Name
 # $4 Postgres User Name
 
+
+
 FILES=/Users/bjg/Metis/Projects/McNulty/FlightOnTime/data/bts_on_time_reports/*
 for month in $FILES
 do
     #echo "Processing $month file..."
     grep ORD $month > tmp.txt
-    psql -c "copy test_script from '/Users/bjg/Metis/Projects/McNulty/FlightOnTime/scripts/tmp.txt' delimiters ',' csv;" faa
+    psql -c "copy \"HEAD_TST\" from '/Users/bjg/Metis/Projects/McNulty/FlightOnTime/scripts/tmp.txt' delimiters ',' csv;" faa
 
 done

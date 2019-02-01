@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+"""Prereq: First create the faa database in Postgres.
+    This script creates the schema of the whole planes database, by outputting a pandas df
+    to sql. The database is populated with one row. The row must be removed, and some columns
+    need to be declared to accept text: which is done in update_schema.sql"""
+
 import os
 import sys
 module_path = os.path.abspath(os.path.join('..'))
@@ -6,20 +12,23 @@ if module_path not in sys.path:
     sys.path.append(module_path)
 import pandas as pd
 from sqlalchemy import create_engine
+from FAA import Ohare
 
-"""Create a table with the defaul headers for the BTS on-time records. Arg 1 = username, Arg 2= table-name"""
+faa = Ohare.Ohare()
 
-username = sys.argv[1]
+schema = faa.ord_flights.head(1)
+
+username = 'bjg' # or 'ubuntu'
+database_name = 'all_flights'
 
 params = { 'host': 'localhost',
            'port': 5432
 }
+
 connection_string = f'postgres://{username}:{params["host"]}@{params["host"]}:{params["port"]}/faa'
 
 engine = create_engine(connection_string)
 
-schema = pd.read_csv('../data/ohare/column_definitions.csv')
-
-schema.to_sql(sys.argv[2], engine, index=False)
+schema.to_sql(database_name, engine, index=False)
 
 
