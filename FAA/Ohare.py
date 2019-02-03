@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from collections import defaultdict
-
+from sqlalchemy import create_engine
 
 class Ohare(object):
 	"""
@@ -16,17 +16,35 @@ class Ohare(object):
 	           'NE': ['JFK', 'EWR']
 	           }
 	
-	def __init__(self, monthly_tffx_csv='../data/ohare/01_2018_ORD_AIR_TFFX.csv'):
+	def __init__(self, monthly_tffx_csv='../data/ohare/01_2018_ORD_AIR_TFFX.csv', sql=False, table_name='ORD_IB_OB'):
 		
-		self.ord_flights = pd.read_csv(monthly_tffx_csv, low_memory=False)
-		
+		if sql == False:
+			#Get the flight data from CSV, LEGACY
+			self.ord_flights = pd.read_csv(monthly_tffx_csv, low_memory=False)
+		else:
+			# Get the flight data from the database
+			username = 'bjg'  # or 'ubuntu'
+			database_name = 'faa'
+			
+			params = {'host': 'localhost',
+			          'port': 5432
+			          }
+			
+			connection_string = f'postgres://{username}:{params["host"]}@{params["host"]}:{params["port"]}/{database_name}'
+			
+			#engine = create_engine(connection_string)
+			
+			self.ord_flights = pd.read_sql_table(table_name, connection_string)
+			
 		# Split the data between inbound and outbound flights
 		mask_from_ord = self.ord_flights.Origin == 'ORD'
 		mask_to_ord = self.ord_flights.Origin != 'ORD'
 		self.flights_from_ohare = self.ord_flights[mask_from_ord]
 		self.flights_to_ohare = self.ord_flights[mask_to_ord]
-		
+	
 		self.baselines = self.get_baselines()
+		
+		
 	
 	def get_baselines(self):
 		ob_del = self.flights_from_ohare.DepDelayMinutes.mean()

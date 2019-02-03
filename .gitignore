@@ -2,7 +2,11 @@
 __pycache__
 data/ohare/01_2018_ORD_AIR_TFFX.csv
 data/zips
+data/dumps
+data/on_time_BTS
+data/payload
 .DS_STORE
 notebooks/*checkpoints
 scripts/tmp.txt
 *.csv
+notebooks/test.json
