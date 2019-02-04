@@ -16,15 +16,17 @@ class Ohare(object):
 	           'NE': ['JFK', 'EWR']
 	           }
 	
-	def __init__(self, monthly_tffx_csv='../data/ohare/01_2018_ORD_AIR_TFFX.csv', sql=False, table_name='ORD_IB_OB'):
+	def __init__(self, monthly_tffx_csv='../data/ohare/test_files/01_2018_ORD_AIR_TFFX.csv', sql=False,
+	             table_name='ORD_IB_OB',
+	             sql_user='bjg', db_name='faa'):
 		
 		if sql == False:
 			#Get the flight data from CSV, LEGACY
 			self.ord_flights = pd.read_csv(monthly_tffx_csv, low_memory=False)
 		else:
 			# Get the flight data from the database
-			username = 'bjg'  # or 'ubuntu'
-			database_name = 'faa'
+			username = sql_user  # or 'bjg'
+			database_name = db_name
 			
 			params = {'host': 'localhost',
 			          'port': 5432

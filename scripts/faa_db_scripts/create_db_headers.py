@@ -25,7 +25,7 @@ params = { 'host': 'localhost',
            'port': 5432
 }
 
-connection_string = f'postgres://{username}:{params["host"]}@{params["host"]}:{params["port"]}/faa'
+connection_string = f'postgres://{username}:{params["host"]}@{params["host"]}:{params["port"]}/FLIGHT_TEST'
 
 engine = create_engine(connection_string)
 

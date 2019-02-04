@@ -24,27 +24,40 @@ class Hanger(object):
 		sns.barplot(x=delays['Reason'], y=delays['Time'])
 		
 	@staticmethod
-	def get_airline_departures(outbound_flights_df):
-		airport_volume = len(outbound_flights_df)
-		late_dep = outbound_flights_df[outbound_flights_df.DepDelay > 0]
-		early_dep = outbound_flights_df[outbound_flights_df.DepDelay <= 0]
+	def get_airline_departures(outbound_flights_df, return_type='json'):
 		
-		total_flights = pd.DataFrame(outbound_flights_df.groupby('Reporting_Airline').size())
+		airport_volume = len(outbound_flights_df)
+		
+		late_dep = outbound_flights_df[outbound_flights_df.DepDelay > 0]  #O(n)
+		early_dep = outbound_flights_df[outbound_flights_df.DepDelay <= 0] #O(n) ... could combine these into an if
+		
+		total_flights = outbound_flights_df.groupby('Reporting_Airline')
+		
+		total_flights = total_flights.size() #I only need to do the
+		# groupby once, and then reference it again...
 		
 		total_flights = total_flights.rename(columns={0: 'Total_Departures'})
 		
+		
+		
 		## Append the LATE departure Stats
-		total_flights = pd.concat([total_flights, late_dep.groupby('Reporting_Airline').count()[['DepDelay']]], axis=1)
+		late_departures = late_dep.groupby('Reporting_Airline')
+		
+		total_flights = pd.concat([total_flights, late_departures.count()[['DepDelay']]], axis=1)
 		total_flights = total_flights.rename(columns={'DepDelay': 'Late_Departures'})
 		
-		total_flights = pd.concat([total_flights, late_dep.groupby('Reporting_Airline').mean()[['DepDelay']]], axis=1)
+		total_flights = pd.concat([total_flights, late_departures.mean()[['DepDelay']]], axis=1)
 		total_flights = total_flights.rename(columns={'DepDelay': 'Avg_Delay'})
 		
+		total_flights = total_flights.rename(columns={0: 'Total_Departures'})
+		
 		# Append the EARLY departure stats
-		total_flights = pd.concat([total_flights, early_dep.groupby('Reporting_Airline').count()[['DepDelay']]], axis=1)
+		early_departures = early_dep.groupby('Reporting_Airline')
+		
+		total_flights = pd.concat([total_flights, early_departures.count()[['DepDelay']]], axis=1)
 		total_flights = total_flights.rename(columns={'DepDelay': 'Early_Departures'})
 		
-		total_flights = pd.concat([total_flights, early_dep.groupby('Reporting_Airline').mean()[['DepDelay']]], axis=1)
+		total_flights = pd.concat([total_flights, early_departures.mean()[['DepDelay']]], axis=1)
 		total_flights = total_flights.rename(columns={'DepDelay': 'Avg_Early_Minutes_SVD'})
 		
 		# Append Misc stats
@@ -52,7 +65,10 @@ class Hanger(object):
 		
 		total_flights['Percent_Late_Departures'] = total_flights['Late_Departures'] / total_flights['Total_Departures']
 		
-		return total_flights.to_json()
+		if return_type == 'json':
+			return total_flights.to_json()
+		else:
+			return total_flights
 
 """
 
