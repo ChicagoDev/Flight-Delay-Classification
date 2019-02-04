@@ -8,3 +8,9 @@ This project is a supervised machine learning program. The goal of the Machine L
 
 [Weather.gov](weather.gov) Has data but it seems hard to grab because of the segmentation
 
+What cities that I travel to have the worst delays?: 
+* Ohare.get_outbound_delays()
+What days of the week have the worst delays?: 
+* Hanger.daily_delays()
+What airlines have the worst delays?: 
+* Hanger.get_airline_departures()
