@@ -69,6 +69,22 @@ class Hanger(object):
 			return total_flights.to_json()
 		else:
 			return total_flights
+		
+	@staticmethod
+	def flights_per_day(flight_bts_df):
+		fpd = flight_bts_df.groupby(flight_bts_df['DayOfWeek']).count()[['Year']]
+		days = pd.DataFrame(['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'], index=[1, 2, 3, 4, 5, 6, 7])
+		days_flights = pd.concat([days, fpd], axis=1)
+		return days_flights.rename(columns={'Year': 'Flights', 0: 'Day'})
+	
+	@staticmethod
+	def daily_delays(flight_bts_df):
+		"""By day of week, return DF with number of flights and number of delays"""
+		fly_by_day = Hanger.flights_per_day(flight_bts_df)
+		
+		delays = flight_bts_df.groupby(flight_bts_df['DayOfWeek']).sum()[['DepDel15']].DepDel15
+		
+		return pd.concat([fly_by_day, delays], axis=1)
 
 """
 
