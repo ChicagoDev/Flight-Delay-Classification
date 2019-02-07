@@ -13,3 +13,4 @@ notebooks/test.json
 scripts/faa_db_scripts/ord.tmp.txt
 scripts/faa_db_scripts/tmp.txt
 scripts/ord.tmp.txt
+scripts/bts_links/*

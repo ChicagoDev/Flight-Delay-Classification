@@ -18,7 +18,7 @@ class Ohare(object):
 	
 	def __init__(self, monthly_tffx_csv='../data/ohare/test_files/01_2018_ORD_AIR_TFFX.csv', sql=False,
 	             table_name='ORD_IB_OB',
-	             sql_user='bjg', db_name='faa'):
+	             sql_user='bjg', db_name='faa', host_name='localhost'):
 		
 		if sql == False:
 			#Get the flight data from CSV, LEGACY
@@ -27,8 +27,7 @@ class Ohare(object):
 			# Get the flight data from the database
 			username = sql_user  # or 'bjg'
 			database_name = db_name
-			
-			params = {'host': 'localhost',
+			params = {'host': host_name,
 			          'port': 5432
 			          }
 			
@@ -104,3 +103,37 @@ class Ohare(object):
 	
 	def get_mini_ob_flights(self):
 		return self.flights_from_ohare[['DepDelay', 'Reporting_Airline', 'Dest', 'ArrDelay', 'Quarter', 'DayOfWeek']]
+
+	def get_modeling_features(self):
+		
+		cols = self.flights_from_ohare.columns.tolist()
+		
+		features = cols[1:3] + cols[4:7] + cols[10:11] + cols[14:15] + cols[23:24] \
+		           + cols[27:28] + cols[30:34] + cols[54:55] + cols[113:119]
+		
+		return features
+	
+	def append_dummies(self, df, column):
+		
+		df = pd.concat([df, pd.get_dummies(column)], axis=1)
+		return df
+	
+	def get_modeling_df(self):
+		"""The dataframe to performe classification modeling is a subset of the all the data columns. This method
+		filters out the unnecessary columns, and also gets dummy variables."""
+		
+		columns = self.get_modeling_features()
+		
+		modeling_df = self.flights_from_ohare[columns]
+		
+		modeling_df = self.append_dummies(modeling_df, modeling_df.Reporting_Airline)
+		modeling_df = self.append_dummies(modeling_df, modeling_df.Dest)
+		
+		modeling_df = modeling_df.drop(columns=['DepDel15', 'Flight_Number_Reporting_Airline', 'Origin'\
+                ,'DestStateName', 'DepDelayMinutes', 'pgtm'])
+		
+		modeling_df = modeling_df.drop(columns=['FlightDate']) # Probably want month
+		
+		
+		return modeling_df
+		
