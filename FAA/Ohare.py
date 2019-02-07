@@ -118,6 +118,24 @@ class Ohare(object):
 		df = pd.concat([df, pd.get_dummies(column)], axis=1)
 		return df
 	
+	def time_cat(self, time_flt):
+		# time categories - Early am, late am, early pm, late pm.
+		
+		if (time_flt <= 600):
+			return 'early_am'
+		elif (time_flt <= 1200):
+			return 'late_am'
+		elif (time_flt < 1800):
+			return 'early_pm'
+		else:
+			return 'late_pm'
+	
+	def was_flight_delayed(self, time_flt):
+		if time_flt > 0.0:
+			return True
+		else:
+			return False
+	
 	def get_modeling_df(self):
 		"""The dataframe to performe classification modeling is a subset of the all the data columns. This method
 		filters out the unnecessary columns, and also gets dummy variables."""
@@ -127,13 +145,24 @@ class Ohare(object):
 		modeling_df = self.flights_from_ohare[columns]
 		
 		modeling_df = self.append_dummies(modeling_df, modeling_df.Reporting_Airline)
-		modeling_df = self.append_dummies(modeling_df, modeling_df.Dest)
+		
 		
 		modeling_df = modeling_df.drop(columns=['DepDel15', 'Flight_Number_Reporting_Airline', 'Origin'\
-                ,'DestStateName', 'DepDelayMinutes', 'pgtm'])
+                ,'DestStateName', 'DepDelayMinutes', 'pgtm', 'Dest'])
 		
 		modeling_df = modeling_df.drop(columns=['FlightDate']) # Probably want month
 		
+		time_dummies = pd.get_dummies(modeling_df[['DepTime']].applymap(lambda tm: self.time_cat(tm)))
+		
+		modeling_df = pd.concat([modeling_df, time_dummies], axis=1)
+		
+		modeling_df = modeling_df.drop(columns=['DepTime', 'Reporting_Airline'])
+		
+		was_delayed = modeling_df[['DepDelay']].applymap(lambda tm: self.was_flight_delayed(tm))
+		was_delayed = was_delayed.rename(columns={'DepDelay': 'Was_Delayed'})
+		
+		modeling_df = pd.concat([modeling_df, was_delayed], axis=1)
+		modeling_df = modeling_df.drop(columns=['DepDelay'])
 		
 		return modeling_df
 		
