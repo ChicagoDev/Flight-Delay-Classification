@@ -35,6 +35,9 @@ class AirportModels(object):
 	def get_holdout_setsXY(self):
 		return (self.X_holdout, self.y_holdout)
 	
+	def get_scaled_training_setsXY(self):
+		return (self.x_train_test_scaled, self.y_traintest)
+	
 	
 	def create_rand_forest(self, rfc):
 		
