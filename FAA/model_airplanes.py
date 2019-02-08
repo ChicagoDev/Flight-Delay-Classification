@@ -28,7 +28,12 @@ class AirportModels(object):
 		scaler.fit(self.X_traintest)
 		self.x_train_test_scaled = scaler.transform(self.X_traintest)
 		
+	def get_training_setsXY(self):
 		
+		return (self.X_traintest, self.y_traintest)
+	
+	def get_holdout_setsXY(self):
+		return (self.X_holdout, self.y_holdout)
 	
 	
 	def create_rand_forest(self, rfc):

@@ -9,7 +9,7 @@ import pandas as pd
 from FAA import Ohare
 from FAA import Hanger
 from FAA.model_airplanes import AirportModels
-
+from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import *
 
 
@@ -28,33 +28,34 @@ def print_metrics(y_true, y_prediction):
 # no_write
 faa = Ohare.Ohare(table_name='ord_w_wthr', sql=True \
                   , sql_user='ubuntu', host_name='localhost')
-db = faa.get_modeling_df()
 
+
+db = faa.get_modeling_df()
 modeling = AirportModels(db)
 
-from sklearn.model_selection import GridSearchCV
+grid_search_rf = GridSearchCV(modeling.rf, {'n_estimators': [12, 50, 100, 500]
+                                        ,'max_depth': [5, 10, 20]
+                                        ,'criterion': ['gini', 'entropy']
+                                        ,'max_features': ['auto', 'log2']
+                                        ,'n_jobs': [-1]
+                                        ,'random_state': 51
+                                        })
 
-grid_search = GridSearchCV(modeling.rf, {'n_estimators': [12, 100, 250, 500]
-	, 'max_depth':                                       [5]
-	, 'criterion':                                       ['gini', 'entropy']
-	, 'max_features':                                    ['auto', 'log2']
-	, 'n_jobs':                                          [-1]
-	, 'random_state':                                    [51]
-                                         })
-y = db.Was_Delayed
-X = db.drop(columns=['Was_Delayed'])
 
-grid_search.fit(X, y)
+X, y = modeling.get_training_setsXY()
+
+grid_search_rf.fit(X,y)
+
 
 
 print('GRID SEARCH RESULTS')
-print(grid_search.cv_results_)
+print(grid_search_rf.cv_results_)
 
 print('#################################################')
 print('BEST SCORE')
-print(grid_search.best_score_)
+print(grid_search_rf.best_score_)
 
 
 print('#################################################')
 print('BEST PARAMETERS')
-print(grid_search.best_params_)
+print(grid_search_rf.best_params_)
