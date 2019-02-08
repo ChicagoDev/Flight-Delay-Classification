@@ -38,7 +38,7 @@ grid_search_rf = GridSearchCV(modeling.rf, {'n_estimators': [12, 50, 100, 500]
                                         ,'criterion': ['gini', 'entropy']
                                         ,'max_features': ['auto', 'log2']
                                         ,'n_jobs': [-1]
-                                        ,'random_state': 51
+                                        ,'random_state': [51]
                                         })
 
 
