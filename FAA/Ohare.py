@@ -135,6 +135,12 @@ class Ohare(object):
 			return True
 		else:
 			return False
+		
+	def was_flight_cancelled(self, flt):
+		if flt > 0:
+			return True
+		else:
+			return False
 	
 	def get_modeling_df(self):
 		"""The dataframe to performe classification modeling is a subset of the all the data columns. This method
@@ -163,6 +169,12 @@ class Ohare(object):
 		
 		modeling_df = pd.concat([modeling_df, was_delayed], axis=1)
 		modeling_df = modeling_df.drop(columns=['DepDelay'])
+		
+		was_cancelled = modeling_df[['Cancelled']].applymap(lambda cn: self.was_flight_cancelled(cn))
+		was_cancelled = was_cancelled.rename(columns={'Cancelled': 'Was_Cancelled'})
+		
+		modeling_df = pd.concat([modeling_df, was_cancelled], axis=1)
+		modeling_df = modeling_df.drop(columns=['Cancelled'])
 		
 		return modeling_df
 		

@@ -7,6 +7,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
+
 class AirportModels(object):
 	
 	metrics = ['roc_auc', 'f1', 'accuracy', 'precision', 'recall']

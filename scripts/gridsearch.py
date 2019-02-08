@@ -74,13 +74,23 @@ with open('random_forrest_hyp_params.out', 'w') as fl:
 	fl.write('\n####################################################\n')
 	fl.write('BEST PARAMETERS')
 	fl.write(str(grid_search_rf.best_params_))
+	
+#RESULT
+#################################################
+#BEST SCORE
+#0.7037809192958449
+#################################################
+#BEST PARAMETERS
+#{'criterion': 'entropy', 'max_depth': 20, 'max_features': 'auto', 'n_estimators': 75, 'n_jobs': -1, 'random_state': 51}
+
+
 
 ######################################################################################
 #Logistic Regression Hyperparameter Search
 grid_search_lr = GridSearchCV(modeling.logr, {'penalty': ['l1', 'l2']
                                               ,'C': [1.0, 2**-1, 2**-2, 2**-4, 2**-10]
                                               ,'random_state': [51]
-                                              , 'solver': ['liblinear', 'saga', 'newton-cg']
+                                              , 'solver': ['liblinear', 'saga']
                                               , 'n_jobs': [-1]})
 
 X_scl, y_scl = modeling.get_scaled_training_setsXY()
