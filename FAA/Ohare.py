@@ -109,7 +109,7 @@ class Ohare(object):
 		cols = self.flights_from_ohare.columns.tolist()
 		
 		features = cols[1:3] + cols[4:7] + cols[10:11] + cols[14:15] + cols[23:24] \
-		           + cols[27:28] + cols[30:34] + cols[54:55] + cols[113:119]
+		           + cols[27:28] + cols[30:34] + cols[47:48] + cols[54:55] + cols[113:119]
 		
 		return features
 	
@@ -173,8 +173,16 @@ class Ohare(object):
 		was_cancelled = modeling_df[['Cancelled']].applymap(lambda cn: self.was_flight_cancelled(cn))
 		was_cancelled = was_cancelled.rename(columns={'Cancelled': 'Was_Cancelled'})
 		
-		modeling_df = pd.concat([modeling_df, was_cancelled], axis=1)
-		modeling_df = modeling_df.drop(columns=['Cancelled'])
+		#modeling_df = pd.concat([modeling_df, was_cancelled], axis=1)
+		
+		
+		delays_and_canceled = pd.DataFrame(pd.concat([modeling_df[['Was_Delayed']], was_cancelled], axis=1).any(axis=1), columns=['Delayed'])
+		
+		modeling_df = modeling_df.drop(columns=['Cancelled', 'Was_Delayed'])
+		
+		modeling_df = pd.concat([modeling_df, delays_and_canceled], axis=1)
+		
+		modeling_df = modeling_df.rename(columns={'Delayed': 'Was_Delayed'})
 		
 		return modeling_df
 		
