@@ -1,7 +1,7 @@
 # FlightOnTime
 
 ## Project 3 at Metis
-This project is a supervised machine learning program. The goal objective is to determine whether an outbound flight from O'Hare airport will or will not be delayed.
+This project is a supervised machine learning program. The objective is to determine whether an outbound flight from O'Hare airport will or will not be delayed.
 
 ### Directory Structure
 
